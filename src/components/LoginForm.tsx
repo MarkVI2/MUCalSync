@@ -5,7 +5,6 @@ import { signIn, useSession } from "next-auth/react";
 import { encryptData } from "@/utils/encryption";
 
 interface TimetableData {
-  // Define your timetable structure here
   schedule?: Array<{
     day: string;
     slots: Array<{
@@ -29,14 +28,11 @@ export default function LoginForm() {
 
   const [showGoogleAuth, setShowGoogleAuth] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string>('');
-
-  // These will be implemented in the next phase
   const [isFetchingTimetable, setIsFetchingTimetable] = useState(false);
-  const [timetableData, setTimetableData] = useState<any>(null);
+  const [timetableData, setTimetableData] = useState<TimetableData | null>(null);
 
-  const { data: session } = useSession();
+  //const { data: session } = useSession();
 
   const validateEmail = (email: string): boolean => {
     // Break down the regex pattern:
@@ -54,7 +50,6 @@ export default function LoginForm() {
     const value = e.target.value.toLowerCase();
     setCredentials(prev => ({ ...prev, username: value }));
     
-    // Only show error if there's a value and it doesn't match the pattern
     if (value && !validateEmail(value)) {
       setError('Please enter a valid MUERP email address');
     } else {
@@ -67,34 +62,35 @@ export default function LoginForm() {
     setShowGoogleAuth(type === 'google');
   };
 
-  const handleGoogleAuth = async () => {
+  const handleCalendarAuth = async () => {
     setIsLoading(true);
     
     try {
-      // Encrypt sensitive data before sending
+      const encryptionKey = process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
+      if (!encryptionKey) {
+        throw new Error('Encryption configuration error');
+      }
+
+      // Encrypt and authenticate with MUERP first
       const encryptedData = encryptData({
         username: credentials.username,
         password: credentials.password
-      }, process.env.NEXT_PUBLIC_ENCRYPTION_KEY!);
+      }, encryptionKey);
 
-      // First authenticate with MUERP
       const loginResponse = await fetch('/api/auth/muerp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          encryptedData
-        }),
+        body: JSON.stringify({ encryptedData }),
       });
 
       if (!loginResponse.ok) {
+        const errorData = await loginResponse.json();
+        console.error("MUERP login error response:", errorData);
         throw new Error('MUERP login failed');
       }
 
-      const loginData = await loginResponse.json();
-      console.log("Login Response Data:", loginData);
-      
       // Fetch timetable data
       const timetableResponse = await fetch('/api/timetable', {
         method: 'POST',
@@ -108,50 +104,90 @@ export default function LoginForm() {
 
       if (!timetableResponse.ok) {
         const errorData = await timetableResponse.json();
-        console.error("Timetable Error Response:", errorData);
+        console.error("Timetable fetch error response:", errorData);
         throw new Error('Failed to fetch timetable');
       }
 
       const timetableData = await timetableResponse.json();
       setTimetableData(timetableData);
 
-      // After successful MUERP login and data storage, initiate Google OAuth
-      const result = await signIn('google', {
-        redirect: true,
-        callbackUrl: '/success'
-      });
+      // Handle different calendar types
+      switch (credentials.calendarType) {
+        case 'google':
+          const result = await signIn('google', {
+            redirect: true,
+            callbackUrl: '/success'
+          });
 
-      if (result?.error) {
-        console.error("Google sign-in error:", result.error);
-        throw new Error('Google authentication failed');
-      }
-
-      if (result?.ok) {
-        // Wait a moment for the session to be updated
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Call calendar sync endpoint
-        const syncResponse = await fetch('/api/calendar/sync', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+          if (result?.error) {
+            console.error("Google sign-in error:", result.error);
+            throw new Error('Google authentication failed');
           }
-        });
 
-        if (!syncResponse.ok) {
-          const errorData = await syncResponse.json();
-          console.error("Sync error:", errorData);
-          throw new Error('Calendar sync failed');
-        }
+          if (result?.ok) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            const syncResponse = await fetch('/api/calendar/sync', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            });
 
-        const syncData = await syncResponse.json();
-        console.log("Sync response:", syncData);
-        setIsSuccess(true);
+            if (!syncResponse.ok) {
+              const errorData = await syncResponse.json();
+              console.error("Sync error response:", errorData);
+              throw new Error('Calendar sync failed');
+            }
+
+            const syncData = await syncResponse.json();
+            console.log("Sync response:", syncData);
+          }
+          break;
+
+        case 'ical':
+          const iCalResponse = await fetch('/api/calendar/ical', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ timetableData }),
+          });
+          if (!iCalResponse.ok) {
+            const errorData = await iCalResponse.json();
+            console.error("iCal generation error response:", errorData);
+            throw new Error('Failed to generate iCal file');
+          }
+          const blob = await iCalResponse.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'muerp-calendar.ics';
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+          break;
+
+        case 'outlook':
+          const outlookResponse = await fetch('/api/calendar/outlook', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ timetableData }),
+          });
+          if (!outlookResponse.ok) {
+            throw new Error('Failed to sync with Outlook');
+          }
+          break;
+
+        default:
+          throw new Error('Please select a calendar type');
       }
 
     } catch (error) {
-      console.error('Authentication error:', error);
-      setError('Authentication failed. Please try again.');
+      console.error('Calendar sync error:', error);
+      setError(error instanceof Error ? error.message : 'Calendar sync failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -194,89 +230,6 @@ export default function LoginForm() {
     
     return `Connect with ${credentials.calendarType.charAt(0).toUpperCase() + credentials.calendarType.slice(1)}`;
   };
-
-  if (isSuccess) {
-    return (
-      <div className="w-full max-w-4xl p-8 bg-black/40 rounded-lg border border-gray-600">
-        <div className="text-center space-y-4">
-          {isLoading ? (
-            <>
-              <div className="flex items-center justify-center">
-                <svg 
-                  className="w-16 h-16 text-blue-500 animate-spin" 
-                  fill="none" 
-                  viewBox="0 0 24 24"
-                >
-                  <circle 
-                    className="opacity-25" 
-                    cx="12" 
-                    cy="12" 
-                    r="10" 
-                    stroke="currentColor" 
-                    strokeWidth="4"
-                  />
-                  <path 
-                    className="opacity-75" 
-                    fill="currentColor" 
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold dark:text-white text-gray-900">
-                Fetching Your Timetable...
-              </h2>
-              <p className="dark:text-gray-300 text-gray-600">
-                Please wait while we retrieve your class schedule
-              </p>
-            </>
-          ) : (
-            <>
-              <div className="flex items-center justify-center">
-                <svg 
-                  className="w-16 h-16 text-green-500" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold dark:text-white text-gray-900">
-                Successfully Connected!
-              </h2>
-              <p className="dark:text-gray-300 text-gray-600">
-                Your MUERP calendar has been synced with Google Calendar.
-              </p>
-              <p className="dark:text-gray-300 text-sm space-x-2">
-                <span>Having trouble syncing? </span>
-                <button
-                  onClick={() => {
-                    setIsSuccess(false);
-                    setCredentials({ username: '', password: '', calendarType: '' });
-                  }}
-                  className="text-blue-400 hover:text-blue-500 transition-colors duration-200"
-                >
-                  Try again
-                </button>
-                <span>or</span>
-                <a
-                  href="mailto:mark.atharv@gmail.com?subject=MU Calendar Sync Support"
-                  className="text-blue-400 hover:text-blue-500 transition-colors duration-200"
-                >
-                  contact us
-                </a>
-              </p>
-            </>
-          )}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-4xl">
@@ -362,7 +315,8 @@ export default function LoginForm() {
             <div className="sm:w-1/3" />
             <div className="sm:w-2/3">
               <button
-                onClick={handleGoogleAuth}
+                type="button"
+                onClick={handleCalendarAuth}
                 disabled={isLoading || !credentials.username || !credentials.password || !credentials.calendarType}
                 className={`w-full flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md
                   ${isLoading || !credentials.username || !credentials.password || !credentials.calendarType 
