@@ -71,6 +71,16 @@ export default function Home() {
           <span>v0.1.0-beta</span>
           <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
         </div>
+        {/*Privacy Policy*/}
+        <div className = "bg-white/10 dark:bg-black/10 backdrop-blur-lg border border-black/10 dark:border-white/10 px-3 py-1.5 rounded-full text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1.5">
+          <a 
+            href = "https://drive.google.com/file/d/18SDj1QHg1xgXVc1srsD7E1UJNT4HYNTf/view?usp=sharing"
+            target = "_blank"
+            rel = "noopener noreferrer"
+            className = "text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
+              Privacy Policy
+            </a>
+        </div>
       </div>
     </div>
   )
