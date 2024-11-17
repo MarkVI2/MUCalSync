@@ -68,7 +68,7 @@ export default function Home() {
 
         {/* Version badge */}
         <div className="bg-white/10 dark:bg-black/10 backdrop-blur-lg border border-black/10 dark:border-white/10 px-3 py-1.5 rounded-full text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1.5">
-          <span>v0.1.0-beta</span>
+          <span>v0.1.3-beta</span>
           <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
         </div>
         {/*Privacy Policy*/}
