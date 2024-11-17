@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { IconAlertTriangle } from '@tabler/icons-react';
+import { IconCircleCheck } from '@tabler/icons-react';
 
 export default function SuccessPage() {
   const { data: session } = useSession();
@@ -65,7 +65,7 @@ export default function SuccessPage() {
           {/* Maintenance Badge */}
           <div className="flex justify-center">
             <div className="bg-green-100 dark:bg-green-900/50 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 px-4 py-2 rounded-full text-sm flex items-center gap-2">
-              <IconAlertTriangle size={20} />
+              <IconCircleCheck size={20} />
               <span>All systems working!</span>
             </div>
           </div>
