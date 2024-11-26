@@ -6,7 +6,7 @@
     },
     {
       "source": "/api/:path*",
-      "destination": "http://139.59.34.194/api/:path*"
+      "destination": "https://mucalsync.buildandship.org/api/:path*"
     }
   ],
   "headers": [

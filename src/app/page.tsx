@@ -1,5 +1,5 @@
 import LoginForm from '../components/LoginForm';
-import { IconAlertTriangle } from "@tabler/icons-react";
+import { IconCircleCheck } from "@tabler/icons-react";
 
 export default function Home() {
   return (
@@ -16,13 +16,13 @@ export default function Home() {
         />
         
         {/* Second blob */}
-        <div 
-          className="absolute left-[50vw] top-[50vh] -translate-x-1/2 -translate-y-1/2 
-          w-[400px] h-[400px] 
-          bg-gradient-to-r dark:from-red-500/30 dark:to-pink-500/30 from-orange-300/40 to-yellow-300/40 
-          rounded-[70%_30%_50%_50%] blur-3xl 
-          animate-blob-2" 
-        />
+          <div 
+            className="absolute left-[50vw] top-[50vh] -translate-x-1/2 -translate-y-1/2 
+            w-[400px] h-[400px] 
+            bg-gradient-to-r dark:from-red-500/30 dark:to-pink-500/30 from-orange-300/40 to-yellow-300/40 
+            rounded-[70%_30%_50%_50%] blur-3xl 
+            animate-blob-2" 
+          />
       </div>
 
       {/* Main content */}
@@ -31,7 +31,7 @@ export default function Home() {
           {/* Maintenance Badge */}
           <div className="flex justify-center">
             <div className="bg-green-100 dark:bg-green-900/50 border border-green-400 dark:border-green-600 text-green-700 dark:text-green-200 px-4 py-2 rounded-full text-sm flex items-center gap-2">
-              <IconAlertTriangle size={20} />
+              <IconCircleCheck size={20} />
               <span>All systems working!</span>
             </div>
           </div>
@@ -68,8 +68,18 @@ export default function Home() {
 
         {/* Version badge */}
         <div className="bg-white/10 dark:bg-black/10 backdrop-blur-lg border border-black/10 dark:border-white/10 px-3 py-1.5 rounded-full text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1.5">
-          <span>v0.1.0-beta</span>
+          <span>v0.1.3-beta</span>
           <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
+        </div>
+        {/*Privacy Policy*/}
+        <div className = "bg-white/10 dark:bg-black/10 backdrop-blur-lg border border-black/10 dark:border-white/10 px-3 py-1.5 rounded-full text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1.5">
+          <a 
+            href = "https://drive.google.com/file/d/1p0A8bIRJ3H1SY-bxBDjCbT_dPXMXoaIC/view?usp=sharing"
+            target = "_blank"
+            rel = "noopener noreferrer"
+            className = "text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
+              Privacy Policy
+            </a>
         </div>
       </div>
     </div>

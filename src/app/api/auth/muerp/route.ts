@@ -1,25 +1,20 @@
 import { NextResponse } from "next/server";
-import { decryptData } from "@/utils/encryption";
 
 export async function POST(request: Request) {
   try {
-    const { encryptedData } = await request.json();
+    const { username, password } = await request.json();
     const baseUrl = process.env.BACKEND_URL;
-
-    // Decrypt the data
-    const decryptedData = decryptData(
-      encryptedData,
-      process.env.ENCRYPTION_KEY!
-    );
 
     // Make a single call to our backend auth endpoint
     const loginResponse = await fetch(`${baseUrl}/api/auth/muerp`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-Encryption-Key": process.env.BACKEND_ENCRYPTION_KEY!,
       },
-      body: JSON.stringify(decryptedData),
+      body: JSON.stringify({
+        username,
+        password,
+      }),
       cache: "no-store",
       credentials: "include",
     });
@@ -48,7 +43,7 @@ export async function POST(request: Request) {
       path: "/",
     });
 
-    response.cookies.set("muerp_username", decryptedData.username, {
+    response.cookies.set("muerp_username", username, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

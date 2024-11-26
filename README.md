@@ -7,6 +7,7 @@
     <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
     <img alt="Static Badge" src="https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54" alt="Python">
     <img src="https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel">
+    <img src="https://img.shields.io/badge/Heroku-430098?style=for-the-badge&logo=heroku&logoColor=fffe" alt="Heroku">
 </p>
 </div>
 
@@ -60,6 +61,8 @@ http://localhost:3000/
 2. Make changes to the forked repository.
 
 3. Submit a pull request, and ensure Vecel's preview deployment is passing.
+
+4. In case of backend development, please get in touch with me on discord (aviator_gator) or [mail](mailto:mark.atharv@gmail.com).
 
 The primary way to contribute is to look under an issue for the issue
 description and try to fix/add that particular bug/feature. In case of new
