@@ -1,6 +1,6 @@
-'use client';
-import { useState } from 'react';
-import { IconBrandGoogleFilled } from '@tabler/icons-react';
+"use client";
+import { useState } from "react";
+import { IconBrandGoogleFilled } from "@tabler/icons-react";
 import { signIn, useSession } from "next-auth/react";
 
 interface TimetableData {
@@ -21,15 +21,15 @@ interface TimetableData {
 
 export default function LoginForm() {
   const [credentials, setCredentials] = useState({
-    username: '',
-    password: '',
-    calendarType: ''
+    username: "",
+    password: "",
+    calendarType: "",
   });
 
   const [showGoogleAuth, setShowGoogleAuth] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [error, setError] = useState<string>('');
+  const [error, setError] = useState<string>("");
 
   // These will be implemented in the next phase
   const [isFetchingTimetable, setIsFetchingTimetable] = useState(false);
@@ -45,107 +45,107 @@ export default function LoginForm() {
     // [a-zA-Z]{3}   - exactly 3 letters
     // [0-9]{3}      - exactly 3 numbers
     // @mahindrauniversity\.edu\.in$ - exact domain match
-    const emailPattern = /^s[ecml](2[2-7])[um][a-z]{3}[0-9]{3}@mahindrauniversity\.edu\.in$/;
+    //const emailPattern = /^s[ecml](2[2-7])[um][a-z]{3}[0-9]{3}@mahindrauniversity\.edu\.in$/;
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@mahindrauniversity\.edu\.in$/;
     return emailPattern.test(email);
   };
 
   const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.toLowerCase();
-    setCredentials(prev => ({ ...prev, username: value }));
-    
+    setCredentials((prev) => ({ ...prev, username: value }));
+
     // Only show error if there's a value and it doesn't match the pattern
     if (value && !validateEmail(value)) {
-      setError('Please enter a valid MUERP email address');
+      setError("Please enter a valid MUERP email address");
     } else {
-      setError('');
+      setError("");
     }
   };
 
   const handleCalendarTypeChange = (type: string) => {
-    setCredentials(prev => ({ ...prev, calendarType: type }));
-    setShowGoogleAuth(type === 'google');
+    setCredentials((prev) => ({ ...prev, calendarType: type }));
+    setShowGoogleAuth(type === "google");
   };
 
   const handleGoogleAuth = async () => {
     setIsLoading(true);
-    
+
     try {
       // First authenticate with MUERP
-      const loginResponse = await fetch('/api/auth/muerp', {
-        method: 'POST',
+      const loginResponse = await fetch("/api/auth/muerp", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           username: credentials.username,
-          password: credentials.password
+          password: credentials.password,
         }),
       });
 
       if (!loginResponse.ok) {
-        throw new Error('MUERP login failed');
+        throw new Error("MUERP login failed");
       }
 
       const loginData = await loginResponse.json();
       console.log("Login Response Data:", loginData);
-      
+
       // Fetch timetable data
-      const timetableResponse = await fetch('/api/timetable', {
-        method: 'POST',
+      const timetableResponse = await fetch("/api/timetable", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: credentials.username
+          username: credentials.username,
         }),
       });
 
       if (!timetableResponse.ok) {
         const errorData = await timetableResponse.json();
         console.error("Timetable Error Response:", errorData);
-        throw new Error('Failed to fetch timetable');
+        throw new Error("Failed to fetch timetable");
       }
 
       const timetableData = await timetableResponse.json();
       setTimetableData(timetableData);
 
       // After successful MUERP login and data storage, initiate Google OAuth
-      const result = await signIn('google', {
+      const result = await signIn("google", {
         redirect: true,
-        callbackUrl: '/success'
+        callbackUrl: "/success",
       });
 
       if (result?.error) {
         console.error("Google sign-in error:", result.error);
-        throw new Error('Google authentication failed');
+        throw new Error("Google authentication failed");
       }
 
       if (result?.ok) {
         // Wait a moment for the session to be updated
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
         // Call calendar sync endpoint
-        const syncResponse = await fetch('/api/calendar/sync', {
-          method: 'POST',
+        const syncResponse = await fetch("/api/calendar/sync", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-          }
+            "Content-Type": "application/json",
+          },
         });
 
         if (!syncResponse.ok) {
           const errorData = await syncResponse.json();
           console.error("Sync error:", errorData);
-          throw new Error('Calendar sync failed');
+          throw new Error("Calendar sync failed");
         }
 
         const syncData = await syncResponse.json();
         console.log("Sync response:", syncData);
         setIsSuccess(true);
       }
-
     } catch (error) {
-      console.error('Authentication error:', error);
-      setError('Authentication failed. Please try again.');
+      console.error("Authentication error:", error);
+      setError("Authentication failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -154,15 +154,15 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(credentials),
       });
-      
-      if (!response.ok) throw new Error('Authentication failed');
+
+      if (!response.ok) throw new Error("Authentication failed");
     } catch (error) {
       // Handle error
     }
@@ -170,10 +170,12 @@ export default function LoginForm() {
 
   const getButtonContent = () => {
     if (isLoading) {
-      return <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />;
+      return (
+        <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+      );
     }
-    
-    if (credentials.calendarType === 'google') {
+
+    if (credentials.calendarType === "google") {
       return (
         <>
           <IconBrandGoogleFilled className="w-5 h-5 mr-2" />
@@ -181,12 +183,15 @@ export default function LoginForm() {
         </>
       );
     }
-    
+
     if (!credentials.calendarType) {
-      return 'Select a Calendar Type';
+      return "Select a Calendar Type";
     }
-    
-    return `Connect with ${credentials.calendarType.charAt(0).toUpperCase() + credentials.calendarType.slice(1)}`;
+
+    return `Connect with ${
+      credentials.calendarType.charAt(0).toUpperCase() +
+      credentials.calendarType.slice(1)
+    }`;
   };
 
   if (isSuccess) {
@@ -196,22 +201,21 @@ export default function LoginForm() {
           {isLoading ? (
             <>
               <div className="flex items-center justify-center">
-                <svg 
-                  className="w-16 h-16 text-blue-500 animate-spin" 
-                  fill="none" 
-                  viewBox="0 0 24 24"
-                >
-                  <circle 
-                    className="opacity-25" 
-                    cx="12" 
-                    cy="12" 
-                    r="10" 
-                    stroke="currentColor" 
+                <svg
+                  className="w-16 h-16 text-blue-500 animate-spin"
+                  fill="none"
+                  viewBox="0 0 24 24">
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
                     strokeWidth="4"
                   />
-                  <path 
-                    className="opacity-75" 
-                    fill="currentColor" 
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                   />
                 </svg>
@@ -226,17 +230,16 @@ export default function LoginForm() {
           ) : (
             <>
               <div className="flex items-center justify-center">
-                <svg 
-                  className="w-16 h-16 text-green-500" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                >
-                  <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" 
+                <svg
+                  className="w-16 h-16 text-green-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
               </div>
@@ -251,17 +254,19 @@ export default function LoginForm() {
                 <button
                   onClick={() => {
                     setIsSuccess(false);
-                    setCredentials({ username: '', password: '', calendarType: '' });
+                    setCredentials({
+                      username: "",
+                      password: "",
+                      calendarType: "",
+                    });
                   }}
-                  className="text-blue-400 hover:text-blue-500 transition-colors duration-200"
-                >
+                  className="text-blue-400 hover:text-blue-500 transition-colors duration-200">
                   Try again
                 </button>
                 <span>or</span>
                 <a
                   href="mailto:mark.atharv@gmail.com?subject=MU Calendar Sync Support"
-                  className="text-blue-400 hover:text-blue-500 transition-colors duration-200"
-                >
+                  className="text-blue-400 hover:text-blue-500 transition-colors duration-200">
                   contact us
                 </a>
               </p>
@@ -279,7 +284,9 @@ export default function LoginForm() {
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="sm:w-1/3">
             <div className="h-full p-4 bg-white/40 dark:bg-black/40 rounded-lg border border-gray-400 dark:border-gray-600">
-              <label htmlFor="username" className="block text-sm text-center text-gray-700 dark:text-gray-200 font-bold">
+              <label
+                htmlFor="username"
+                className="block text-sm text-center text-gray-700 dark:text-gray-200 font-bold">
                 MUERP Username
               </label>
             </div>
@@ -296,11 +303,7 @@ export default function LoginForm() {
                 value={credentials.username}
                 onChange={handleUsernameChange}
               />
-              {error && (
-                <p className="text-sm text-red-500 mt-1">
-                  {error}
-                </p>
-              )}
+              {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
             </div>
           </div>
         </div>
@@ -309,7 +312,9 @@ export default function LoginForm() {
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="sm:w-1/3">
             <div className="h-full p-4 bg-white/40 dark:bg-black/40 rounded-lg border border-gray-400 dark:border-gray-600">
-              <label htmlFor="password" className="block text-sm text-center text-gray-700 dark:text-gray-200 font-bold">
+              <label
+                htmlFor="password"
+                className="block text-sm text-center text-gray-700 dark:text-gray-200 font-bold">
                 MUERP Password
               </label>
             </div>
@@ -323,8 +328,12 @@ export default function LoginForm() {
               className={`w-full px-4 py-4 bg-white/40 dark:bg-black/40 border border-gray-400 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white`}
               placeholder="Enter your MUERP password"
               value={credentials.password}
-              onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
-
+              onChange={(e) =>
+                setCredentials((prev) => ({
+                  ...prev,
+                  password: e.target.value,
+                }))
+              }
             />
           </div>
         </div>
@@ -333,7 +342,9 @@ export default function LoginForm() {
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="sm:w-1/3">
             <div className="h-full p-4 bg-white/40 dark:bg-black/40 rounded-lg border border-gray-400 dark:border-gray-600">
-              <label htmlFor="calendarType" className="block text-sm text-center text-gray-700 dark:text-gray-200 font-bold">
+              <label
+                htmlFor="calendarType"
+                className="block text-sm text-center text-gray-700 dark:text-gray-200 font-bold">
                 Calendar Type
               </label>
             </div>
@@ -343,12 +354,19 @@ export default function LoginForm() {
               id="calendarType"
               value={credentials.calendarType}
               onChange={(e) => handleCalendarTypeChange(e.target.value)}
-              className="w-full h-full px-4 mr-1 py-4 bg-white/40 dark:bg-black/40 border border-gray-400 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white"
-            >
-              <option value="" className="text-gray-900 dark:text-white">Select a calendar</option>
-              <option value="google" className="text-gray-900 dark:text-white">Google Calendar</option>
-              <option value="ical" className="text-gray-900 dark:text-white">iCal</option>
-              <option value="outlook" className="text-gray-900 dark:text-white">Outlook</option>
+              className="w-full h-full px-4 mr-1 py-4 bg-white/40 dark:bg-black/40 border border-gray-400 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 dark:text-white">
+              <option value="" className="text-gray-900 dark:text-white">
+                Select a calendar
+              </option>
+              <option value="google" className="text-gray-900 dark:text-white">
+                Google Calendar
+              </option>
+              <option value="ical" className="text-gray-900 dark:text-white">
+                iCal
+              </option>
+              <option value="outlook" className="text-gray-900 dark:text-white">
+                Outlook
+              </option>
             </select>
           </div>
         </div>
@@ -360,13 +378,21 @@ export default function LoginForm() {
             <div className="sm:w-2/3">
               <button
                 onClick={handleGoogleAuth}
-                disabled={isLoading || !credentials.username || !credentials.password || !credentials.calendarType}
+                disabled={
+                  isLoading ||
+                  !credentials.username ||
+                  !credentials.password ||
+                  !credentials.calendarType
+                }
                 className={`w-full flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md
-                  ${isLoading || !credentials.username || !credentials.password || !credentials.calendarType 
-                    ? 'bg-gray-600 dark:bg-gray-700 cursor-not-allowed text-gray-300 dark:text-gray-400' 
-                    : 'bg-gradient-to-r from-orange-300 to-yellow-300 dark:from-blue-500 dark:to-purple-500 hover:opacity-90 text-gray-900 dark:text-white transition-all duration-200'
-                  }`}
-              >
+                  ${
+                    isLoading ||
+                    !credentials.username ||
+                    !credentials.password ||
+                    !credentials.calendarType
+                      ? "bg-gray-600 dark:bg-gray-700 cursor-not-allowed text-gray-300 dark:text-gray-400"
+                      : "bg-gradient-to-r from-orange-300 to-yellow-300 dark:from-blue-500 dark:to-purple-500 hover:opacity-90 text-gray-900 dark:text-white transition-all duration-200"
+                  }`}>
                 {getButtonContent()}
               </button>
             </div>
@@ -381,8 +407,7 @@ export default function LoginForm() {
               <button
                 type="submit"
                 className="w-full px-4 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-black transition-all duration-200"
-                disabled
-              >
+                disabled>
                 Coming Soon
               </button>
             </div>

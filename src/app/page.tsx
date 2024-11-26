@@ -16,13 +16,13 @@ export default function Home() {
         />
         
         {/* Second blob */}
-        <div 
-          className="absolute left-[50vw] top-[50vh] -translate-x-1/2 -translate-y-1/2 
-          w-[400px] h-[400px] 
-          bg-gradient-to-r dark:from-red-500/30 dark:to-pink-500/30 from-orange-300/40 to-yellow-300/40 
-          rounded-[70%_30%_50%_50%] blur-3xl 
-          animate-blob-2" 
-        />
+          <div 
+            className="absolute left-[50vw] top-[50vh] -translate-x-1/2 -translate-y-1/2 
+            w-[400px] h-[400px] 
+            bg-gradient-to-r dark:from-red-500/30 dark:to-pink-500/30 from-orange-300/40 to-yellow-300/40 
+            rounded-[70%_30%_50%_50%] blur-3xl 
+            animate-blob-2" 
+          />
       </div>
 
       {/* Main content */}
