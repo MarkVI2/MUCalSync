@@ -57,21 +57,9 @@ export default function Home() {
 
       {/* Footer Badge */}
       <div className="fixed bottom-4 right-4 z-20 flex gap-3">
-        {/* Made by badge */}
-        <div className="bg-white/10 dark:bg-black/10 backdrop-blur-lg border border-black/10 dark:border-white/10 px-3 py-1.5 rounded-full text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1.5">
-          <span>Made with 🦖 by</span>
-          <a
-            href="https://github.com/markvi2"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
-            AviatorGator
-          </a>
-        </div>
-
         {/* Version badge */}
         <div className="bg-white/10 dark:bg-black/10 backdrop-blur-lg border border-black/10 dark:border-white/10 px-3 py-1.5 rounded-full text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1.5">
-          <span>v0.1.3-beta</span>
+          <span>v1.0.1</span>
           <span className="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
         </div>
         {/*Privacy Policy*/}

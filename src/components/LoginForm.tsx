@@ -349,6 +349,7 @@ export default function LoginForm() {
               </label>
             </div>
           </div>
+
           <div className="sm:w-2/3">
             <select
               id="calendarType"
@@ -371,28 +372,19 @@ export default function LoginForm() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="sm:w-1/3">
-            <a 
-              href="https://buildandship.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block h-full"
-            >
-              <div className="h-full p-4 bg-white/40 dark:bg-black/40 rounded-lg border border-gray-400 dark:border-gray-600 hover:bg-white/50 dark:hover:bg-black/50 transition-all duration-200">
-                <label className="block text-sm text-center text-gray-700 dark:text-gray-200 font-bold">
-                  Build and Ship
-                </label>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        {/* Google OAuth Button */}
+        {/* Google OAuth Button and Build and Ship Button */}
         {showGoogleAuth && (
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="sm:w-1/3" />
-            <div className="sm:w-2/3">
+          <div className="flex flex-col sm:flex-row">
+            <div className="flex flex-row gap-4 w-full">
+              <div className="h-full sm:w-[32.5%] bg-slate-900 bg-white/40 dark:bg-black/40 rounded-lg border border-gray-400 dark:border-gray-600">
+                <button
+                  onClick={() =>
+                    window.open("https://buildandship.org", "_blank")
+                  }
+                  className="w-full h-full p-4 text-sm text-center text-gray-700 dark:text-gray-200 font-bold bg-blue-500 hover:bg-blue-600 transition duration-200 rounded-md">
+                  <span className="text-center">Visit Build and Ship</span>
+                </button>
+              </div>
               <button
                 onClick={handleGoogleAuth}
                 disabled={
@@ -401,7 +393,7 @@ export default function LoginForm() {
                   !credentials.password ||
                   !credentials.calendarType
                 }
-                className={`w-full flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md
+                className={`flex-1 flex items-center justify-center px-4 py-3 border border-transparent text-base font-medium rounded-md
                   ${
                     isLoading ||
                     !credentials.username ||
@@ -418,12 +410,20 @@ export default function LoginForm() {
 
         {/* Submit Button - Only show for non-Google options */}
         {!showGoogleAuth && (
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="sm:w-1/3" />
-            <div className="sm:w-2/3">
+          <div className="flex flex-col sm:flex-row">
+            <div className="flex flex-row gap-4 w-full">
+              <div className="h-full sm:w-[32.5%] bg-slate-900 bg-white/40 dark:bg-black/40 rounded-lg border border-gray-400 dark:border-gray-600">
+                <button
+                  onClick={() =>
+                    window.open("https://buildandship.org", "_blank")
+                  }
+                  className="w-full p-4 h-full text-sm text-center text-gray-700 dark:text-gray-200 font-bold bg-blue-500 hover:bg-blue-600 transition duration-200 rounded-md">
+                  <span className="text-center">Visit Build and Ship</span>
+                </button>
+              </div>
               <button
                 type="submit"
-                className="w-full px-4 py-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-black transition-all duration-200"
+                className="w-[65%] p-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-black transition-all duration-200"
                 disabled>
                 Coming Soon
               </button>
