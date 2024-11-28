@@ -371,6 +371,23 @@ export default function LoginForm() {
           </div>
         </div>
 
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="sm:w-1/3">
+            <a 
+              href="https://buildandship.org"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block h-full"
+            >
+              <div className="h-full p-4 bg-white/40 dark:bg-black/40 rounded-lg border border-gray-400 dark:border-gray-600 hover:bg-white/50 dark:hover:bg-black/50 transition-all duration-200">
+                <label className="block text-sm text-center text-gray-700 dark:text-gray-200 font-bold">
+                  Build and Ship
+                </label>
+              </div>
+            </a>
+          </div>
+        </div>
+
         {/* Google OAuth Button */}
         {showGoogleAuth && (
           <div className="flex flex-col sm:flex-row gap-4">
