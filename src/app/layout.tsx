@@ -1,5 +1,4 @@
 import "./globals.css";
-import { ThemeProvider } from "../components/ThemeProvider";
 import { Nunito, Playwrite_US_Modern } from "next/font/google";
 
 const nunito = Nunito({
@@ -30,10 +29,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`$antialiased transition-colors duration-300`}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="gradient-circles" />
-          {children}
-        </ThemeProvider>
+        <div className="gradient-circles" />
+        {children}
       </body>
     </html>
   );
