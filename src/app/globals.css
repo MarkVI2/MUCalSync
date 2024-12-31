@@ -1,10 +1,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+/*
+
 
 * {
-  font-family: 'Nunito', sans-serif;
+  font-family: "Nunito", sans-serif;
 }
 
 @layer utilities {
@@ -17,7 +19,7 @@
   }
 }
 
-/* Blue blob animation */
+/* Blue blob animation 
 @keyframes blob-1 {
   0% {
     transform: translate(calc(-50% + 0vw), calc(-50% + 0vh)) scale(1);
@@ -49,7 +51,7 @@
   }
 }
 
-/* Red blob animation */
+/* Red blob animation 
 @keyframes blob-2 {
   0% {
     transform: translate(calc(-50% + 0vw), calc(-50% + 0vh)) scale(1);
@@ -87,4 +89,18 @@
 
 .animate-blob-2 {
   animation: blob-2 30s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+}
+*/
+@import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Playwrite+US+Modern:wght@100..400&display=swap");
+
+.font-nunito {
+  font-family: "Nunito", sans-serif;
+}
+.font-playwrite {
+  font-family: "Playwrite US Modern", serif;
+}
+
+* {
+  font-family: "Nunito", serif;
+  font-size: large;
 }
