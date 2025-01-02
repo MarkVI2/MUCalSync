@@ -8,8 +8,10 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        nunito: ["var(--font-nunito)", "sans-serif"],
-        playwrite: ["var(--font-playwrite)", "serif"],
+        sans: ["var(--font-nunito)"],
+        serif: ["var(--font-fredoka)"],
+        nunito: ["var(--font-nunito)", "serif"],
+        playwrite: ["var(--font-fredoka)", "serif"],
       },
       animation: {
         gradient: "gradient 15s ease infinite",

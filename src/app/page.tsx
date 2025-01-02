@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Dropdown from "../components/dropdown";
 import {
   SCHOOL_OPTIONS,
@@ -13,17 +13,77 @@ import {
   IconBrandApple,
   IconBrandTeams,
   IconArrowLeft,
-  IconCopyPlus,
   IconCalendarPlus,
+  IconCheck,
 } from "@tabler/icons-react";
 import Link from "next/link";
-import { signIn, getSession } from "next-auth/react";
 
 export default function Home() {
   const [selectedSchool, setSelectedSchool] = useState<SchoolOption | "">("");
   const [selectedBatch, setSelectedBatch] = useState<BatchYear | "">("");
   const [selectedStream, setSelectedStream] = useState<string>("");
   const [selectedSection, setSelectedSection] = useState<string>("");
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isGoogleSuccess, setIsGoogleSuccess] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/auth/check");
+        const data = await res.json();
+        if (data.authenticated) {
+          setIsGoogleSuccess(true);
+        }
+      } catch (error) {
+        console.error("Auth check failed: ", error);
+      }
+    };
+
+    const handleMessage = async (e: MessageEvent) => {
+      if (e.data.type === "GOOGLE_AUTH_SUCCESS") {
+        setIsGoogleLoading(false);
+        setIsGoogleSuccess(true);
+
+        try {
+          const calendarData = {
+            school: selectedSchool,
+            batch: selectedBatch,
+            stream: selectedStream,
+            section: selectedSection,
+            token: {
+              access_token: e.data.token.access_token,
+              refresh_token: e.data.token.refresh_token,
+            },
+            email: e.data.token.email,
+            calendarType: "google",
+          };
+
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/calendar/sync`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(calendarData),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error("Failed to sync calendar");
+          }
+          console.log("Calendar synced successfully!");
+        } catch (error) {
+          console.error("Failed to sync calendar:", error);
+          setIsGoogleSuccess(false);
+        }
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    checkAuth();
+    return () => window.removeEventListener("message", handleMessage);
+  }, [selectedSchool, selectedBatch, selectedStream, selectedSection]);
 
   const getAvailableStreams = () => {
     if (!selectedSchool || !selectedBatch) return [];
@@ -37,10 +97,6 @@ export default function Home() {
 
   const isStreamDisabled = !selectedSchool || !selectedBatch;
   const isSectionDisabled = !selectedStream;
-
-  const handleGoogleAuth = async () => {
-    await signIn("google", { callbackUrl: "/auth/callback" });
-  };
 
   return (
     <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-slate-50 to-indigo-50 p-4">
@@ -60,10 +116,10 @@ export default function Home() {
         {/* Glass card */}
         <div className="backdrop-blur-md bg-white/70 rounded-2xl shadow-2xl p-6 md:p-12 space-y-8">
           {/* Header section */}
-          <div className="text-center space-y-5">
+          <div className="text-center space-y-2">
             <h1
-              className="text-3xl sm:text-4xl md:text-5xl font-playwrite font-bold 
-              bg-gradient-to-r from-indigo-600 to-slate-800 bg-clip-text text-transparent py-5"
+              className="text-5xl sm:text-6xl md:text-7xl font-fredoka font-semibold 
+              bg-gradient-to-r from-indigo-600 to-slate-800 bg-clip-text text-transparent py-2"
             >
               MU Calendar Sync
             </h1>
@@ -109,18 +165,90 @@ export default function Home() {
                 (calendar) => {
                   const isDisabled =
                     calendar !== "Google Calendar" &&
-                    calendar !== "Suggest More...";
-                  const handleClick = async () => {
+                    calendar !== "Suggest More..." &&
+                    calendar !== "iCal";
+
+                  const handleClick = async (calendar: string) => {
                     switch (calendar) {
                       case "Google Calendar":
-                        await signIn("google", { callbackUrl: "/success" });
-                        const session = await getSession();
-                        if (session) {
-                          console.log("Access Token:", session.accessToken);
+                        if (isGoogleSuccess) return;
+                        setIsGoogleLoading(true); // Set loading state
+                        try {
+                          const response = await fetch("/api/auth/google");
+                          const data = await response.json();
+                          if (data.url) {
+                            const authWindow = window.open(
+                              data.url,
+                              "_blank",
+                              "width=600,height=600"
+                            );
+                            const handleMessage = (e: MessageEvent) => {
+                              if (e.data.type === "GOOGLE_AUTH_SUCCESS") {
+                                setIsGoogleLoading(false);
+                                setIsGoogleSuccess(true);
+                                window.removeEventListener(
+                                  "message",
+                                  handleMessage
+                                );
+                              }
+                              if (e.data.type === "GOOGLE_AUTH_ERROR") {
+                                setIsGoogleLoading(false);
+                                setIsGoogleSuccess(false);
+                                window.removeEventListener(
+                                  "message",
+                                  handleMessage
+                                );
+                              }
+                            };
+                            window.addEventListener("message", handleMessage);
+                          } else {
+                            throw new Error("Google auth URL not found");
+                          }
+                        } catch (error) {
+                          setIsGoogleLoading(false);
+                          setIsGoogleSuccess(false);
+                          console.error("Google auth error:", error);
                         }
                         break;
                       case "iCal":
-                        console.log("iCal clicked");
+                        try {
+                          const calendarData = {
+                            school: selectedSchool,
+                            batch: selectedBatch,
+                            stream: selectedStream,
+                            section: selectedSection,
+                            calendarType: "ical",
+                          };
+
+                          const response = await fetch(
+                            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/calendar/ical`,
+                            {
+                              method: "POST",
+                              headers: {
+                                "Content-Type": "application/json",
+                              },
+                              body: JSON.stringify(calendarData),
+                            }
+                          );
+
+                          if (!response.ok) {
+                            throw new Error("Failed to generate iCal file");
+                          }
+
+                          // Download the iCal file
+                          const blob = await response.blob();
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = "mucalendar.ics";
+                          document.body.appendChild(a);
+                          a.click();
+                          window.URL.revokeObjectURL(url);
+                          document.body.removeChild(a);
+                        } catch (error) {
+                          console.error("Failed to generate iCal file:", error);
+                          // Handle error - show error message to user
+                        }
                         break;
                       case "Outlook":
                         console.log("Outlook clicked");
@@ -142,10 +270,14 @@ export default function Home() {
                       transition-all duration-185 ${
                         isDisabled
                           ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                          : calendar === "Google Calendar"
+                          ? isGoogleSuccess
+                            ? "bg-green-400 text-white cursor-default"
+                            : "bg-white hover:bg-indigo-600 text-indigo-600 hover:text-white shadow-md"
                           : "bg-white hover:bg-indigo-600 text-indigo-600 hover:text-white shadow-md"
                       }`}
-                      disabled={isDisabled}
-                      onClick={handleClick}
+                      disabled={isDisabled || isGoogleSuccess}
+                      onClick={() => handleClick(calendar)}
                     >
                       <div className="flex flex-col items-center gap-3">
                         {/* Shine effect */}
@@ -157,7 +289,15 @@ export default function Home() {
 
                         {/* Icons */}
                         {calendar === "Google Calendar" && (
-                          <IconBrandGoogleFilled className="w-8 h-8 transition-colors duration-300" />
+                          <>
+                            {isGoogleLoading ? (
+                              <div className="w-8 h-8 animate-spin rounded-full border-2 border-t-transparent border-indigo-500" />
+                            ) : isGoogleSuccess ? (
+                              <IconCheck className="w-8 h-8 text-white" />
+                            ) : (
+                              <IconBrandGoogleFilled className="w-8 h-8 transition-colors duration-300" />
+                            )}
+                          </>
                         )}
                         {calendar === "iCal" && (
                           <IconBrandApple className="w-8 h-8 transition-colors duration-300" />
@@ -197,7 +337,7 @@ export default function Home() {
                 </a>
               </div>
               <div className="text-gray-600 text-center dark:text-gray-400">
-                v1.2.0-beta
+                v1.2.0-alpha
               </div>
             </div>
           </div>

@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Nunito, Playwrite_US_Modern } from "next/font/google";
+import { Nunito, Fredoka } from "next/font/google";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -7,9 +7,10 @@ const nunito = Nunito({
   variable: "--font-nunito",
 });
 
-const playwrite = Playwrite_US_Modern({
+const fredoka = Fredoka({
+  subsets: ["latin"],
   display: "swap",
-  variable: "--font-nunito",
+  variable: "--font-fredoka",
 });
 
 export const metadata = {
@@ -28,7 +29,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`$antialiased transition-colors duration-300`}>
+      <body
+        className={`${fredoka.variable} ${nunito.variable} antialiased transition-colors duration-300`}
+      >
         <div className="gradient-circles" />
         {children}
       </body>
