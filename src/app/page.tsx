@@ -221,7 +221,7 @@ export default function Home() {
                           };
 
                           const response = await fetch(
-                            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/calendar/ical`,
+                            `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/calendar/sync`,
                             {
                               method: "POST",
                               headers: {

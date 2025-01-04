@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
   const access_token = cookieStore.get("google_access_token")?.value;
 
   if (!refresh_token) {
-    return NextResponse.json({ authenticated: false });
+    return NextResponse.json({ googleAuthenticated: false });
   }
 
   if (!access_token) {
@@ -31,13 +31,13 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json({
-      authenticated: true,
+      googleAuthenticated: true,
       token: newTokens.access_token,
     });
   }
 
   return NextResponse.json({
-    authenticated: true,
+    googleAuthenticated: true,
     token: access_token,
   });
 }
