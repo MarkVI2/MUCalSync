@@ -17,6 +17,7 @@ import {
   IconCheck,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import FAQModal from "@/components/FAQModal";
 
 export default function Home() {
   const [selectedSchool, setSelectedSchool] = useState<SchoolOption | "">("");
@@ -25,13 +26,14 @@ export default function Home() {
   const [selectedSection, setSelectedSection] = useState<string>("");
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isGoogleSuccess, setIsGoogleSuccess] = useState(false);
+  const [isFAQOpen, setIsFAQOpen] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const res = await fetch("/api/auth/check");
         const data = await res.json();
-        if (data.authenticated) {
+        if (data.googleAuthenticated) {
           setIsGoogleSuccess(true);
         }
       } catch (error) {
@@ -64,6 +66,7 @@ export default function Home() {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
+                "X-API-Key": process.env.API_KEY || "",
               },
               body: JSON.stringify(calendarData),
             }
@@ -123,6 +126,10 @@ export default function Home() {
             >
               MU Calendar Sync
             </h1>
+            <p>
+              Seamlessly sync your timetable with Google Calendar, iCalendar,
+              and more!
+            </p>
             <div className="h-px bg-gradient-to-r from-indigo-100 to-slate-200 w-full max-w-2xl mx-auto" />
           </div>
 
@@ -138,7 +145,7 @@ export default function Home() {
                 value={selectedSchool}
               />
               <Dropdown
-                label="Select Batch"
+                label="Select Year"
                 options={[...BATCH_YEARS]}
                 onSelect={(value) => setSelectedBatch(value as BatchYear)}
                 value={selectedBatch}
@@ -247,7 +254,6 @@ export default function Home() {
                           document.body.removeChild(a);
                         } catch (error) {
                           console.error("Failed to generate iCal file:", error);
-                          // Handle error - show error message to user
                         }
                         break;
                       case "Outlook":
@@ -326,6 +332,13 @@ export default function Home() {
                 >
                   Privacy Policy
                 </a>
+                &nbsp;&nbsp;|&nbsp;
+                <button
+                  onClick={() => setIsFAQOpen(true)}
+                  className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors ml-2"
+                >
+                  FAQs
+                </button>
               </div>
               <div className="text-gray-600 text-center dark:text-gray-400">
                 Made with 🦖 by{" "}
@@ -343,6 +356,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <FAQModal isOpen={isFAQOpen} onClose={() => setIsFAQOpen(false)} />
     </div>
   );
 }

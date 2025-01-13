@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 export async function GET(request: NextRequest) {
@@ -118,3 +118,40 @@ export async function GET(request: NextRequest) {
     );
   }
 }
+
+export const POST = async (request: NextRequest) => {
+  try {
+    const { username, password } = await request.json();
+
+    // Validate against your admin credentials
+    const validUsername = process.env.ADMIN_USERNAME;
+    const validPassword = process.env.ADMIN_PASSWORD;
+    const cookieStore = await cookies();
+
+    if (!validUsername || !validPassword) {
+      return NextResponse.json(
+        { error: "Server configuration error" },
+        { status: 500 }
+      );
+    }
+
+    if (username === validUsername && password === validPassword) {
+      // Set admin session cookie
+      cookieStore.set("admin_session", "true", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+      });
+
+      return NextResponse.json({ success: true });
+    }
+
+    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+  } catch (error) {
+    console.error("Authentication error:", error);
+    return NextResponse.json(
+      { error: "Authentication failed" },
+      { status: 500 }
+    );
+  }
+};

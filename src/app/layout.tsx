@@ -1,5 +1,9 @@
+"use client";
 import "./globals.css";
 import { Nunito, Fredoka } from "next/font/google";
+import { metadata } from "./metadata";
+import Providers from "../components/Providers";
+import { Analytics } from "@vercel/analytics/react";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -13,15 +17,6 @@ const fredoka = Fredoka({
   variable: "--font-fredoka",
 });
 
-export const metadata = {
-  title: "MUCalSync",
-  description: "Sync your MUERP timetable with Google Calendar",
-  icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
-  },
-};
-
 export default function RootLayout({
   children,
 }: {
@@ -29,11 +24,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <title>{metadata.title}</title>
+        <meta name="description" content={metadata.description} />
+        <link rel="icon" href={metadata.icons.icon} />
+        <link rel="apple-touch-icon" href={metadata.icons.apple} />
+      </head>
       <body
         className={`${fredoka.variable} ${nunito.variable} antialiased transition-colors duration-300`}
       >
-        <div className="gradient-circles" />
-        {children}
+        <Providers>
+          <div className="gradient-circles" />
+          {children}
+          <Analytics />
+        </Providers>
       </body>
     </html>
   );
