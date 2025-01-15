@@ -350,7 +350,7 @@ export default function Home() {
                 </a>
               </div>
               <div className="text-gray-600 text-center dark:text-gray-400">
-                v1.2.0-alpha
+                v2.0.1
               </div>
             </div>
           </div>
