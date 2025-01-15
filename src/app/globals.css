@@ -1,90 +1,78 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Playwrite+US+Modern:wght@100..400&display=swap");
+
+.font-nunito {
+  font-family: "Nunito", sans-serif;
+}
+.font-playwrite {
+  font-family: "Playwrite US Modern", serif;
+}
 
 * {
-  font-family: 'Nunito', sans-serif;
+  font-family: "Nunito", serif;
+  font-size: large;
 }
 
-@layer utilities {
-  .animation-delay-2000 {
-    animation-delay: 2s;
-  }
-
-  .animation-delay-4000 {
-    animation-delay: 4s;
-  }
+/* Custom view styles */
+.custom-week-view {
+  --fc-border-color: #e5e7eb;
+  --fc-event-bg-color: #3b82f6;
+  --fc-event-border-color: #2563eb;
 }
 
-/* Blue blob animation */
-@keyframes blob-1 {
-  0% {
-    transform: translate(calc(-50% + 0vw), calc(-50% + 0vh)) scale(1);
-    border-radius: 60% 40% 70% 30%;
-  }
-  16% {
-    transform: translate(calc(-50% + 25vw), calc(-50% - 15vh)) scale(1.3);
-    border-radius: 30% 60% 40% 70%;
-  }
-  33% {
-    transform: translate(calc(-50% - 20vw), calc(-50% + 25vh)) scale(1.1);
-    border-radius: 70% 30% 60% 40%;
-  }
-  50% {
-    transform: translate(calc(-50% + 15vw), calc(-50% - 25vh)) scale(1.5);
-    border-radius: 40% 70% 30% 60%;
-  }
-  66% {
-    transform: translate(calc(-50% - 25vw), calc(-50% - 10vh)) scale(1.2);
-    border-radius: 60% 40% 70% 30%;
-  }
-  83% {
-    transform: translate(calc(-50% + 20vw), calc(-50% + 20vh)) scale(1.4);
-    border-radius: 30% 60% 40% 70%;
-  }
-  100% {
-    transform: translate(calc(-50% + 0vw), calc(-50% + 0vh)) scale(1);
-    border-radius: 60% 40% 70% 30%;
-  }
+.custom-week-view .fc-daygrid-day {
+  height: 150px !important;
 }
 
-/* Red blob animation */
-@keyframes blob-2 {
-  0% {
-    transform: translate(calc(-50% + 0vw), calc(-50% + 0vh)) scale(1);
-    border-radius: 70% 30% 50% 50%;
-  }
-  16% {
-    transform: translate(calc(-50% - 20vw), calc(-50% + 15vh)) scale(1.4);
-    border-radius: 50% 50% 30% 70%;
-  }
-  33% {
-    transform: translate(calc(-50% + 25vw), calc(-50% - 20vh)) scale(1.2);
-    border-radius: 30% 70% 50% 50%;
-  }
-  50% {
-    transform: translate(calc(-50% - 15vw), calc(-50% + 20vh)) scale(1.5);
-    border-radius: 50% 50% 70% 30%;
-  }
-  66% {
-    transform: translate(calc(-50% + 20vw), calc(-50% - 25vh)) scale(1.3);
-    border-radius: 70% 30% 60% 40%;
-  }
-  83% {
-    transform: translate(calc(-50% - 25vw), calc(-50% - 15vh)) scale(1.1);
-    border-radius: 40% 60% 30% 70%;
-  }
-  100% {
-    transform: translate(calc(-50% + 0vw), calc(-50% + 0vh)) scale(1);
-    border-radius: 70% 30% 50% 50%;
-  }
+.custom-week-view .fc-daygrid-day-frame {
+  padding: 8px;
 }
 
-.animate-blob-1 {
-  animation: blob-1 30s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
-}
+@media (max-width: 768px) {
+  .fc {
+    /* General calendar container */
+    font-size: 0.8rem;
+  }
 
-.animate-blob-2 {
-  animation: blob-2 30s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+  .fc .fc-toolbar {
+    /* Calendar header/toolbar */
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .fc .fc-toolbar-title {
+    /* Calendar title */
+    font-size: 1.2rem;
+  }
+
+  .fc .fc-button {
+    /* Calendar buttons */
+    padding: 0.25rem 0.5rem;
+  }
+
+  .fc .fc-view-harness {
+    /* Calendar view container */
+    height: auto !important;
+  }
+
+  .fc .fc-daygrid-day-number {
+    /* Day numbers */
+    padding: 0.25rem;
+  }
+
+  .fc .fc-daygrid-day-events {
+    /* Event container */
+    min-height: 1.5rem;
+  }
+
+  /* Responsive adjustments */
+  .custom-week-view .fc-daygrid-day {
+    height: 100px !important;
+  }
+
+  .custom-week-view .fc-daygrid-day-frame {
+    padding: 4px;
+  }
 }

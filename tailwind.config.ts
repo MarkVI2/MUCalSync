@@ -7,9 +7,38 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-nunito)"],
+        serif: ["var(--font-fredoka)"],
+        nunito: ["var(--font-nunito)", "serif"],
+        playwrite: ["var(--font-fredoka)", "serif"],
+      },
       animation: {
-        "blob-1": "blob-1 40s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        "blob-2": "blob-2 40s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate",
+        gradient: "gradient 15s ease infinite",
+        "fade-in-up": "fadeInUp 0.5s ease-out",
+        "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+      },
+      keyframes: {
+        gradient: {
+          "0%, 100%": {
+            "background-size": "200% 200%",
+            "background-position": "left center",
+          },
+          "50%": {
+            "background-size": "200% 200%",
+            "background-position": "right center",
+          },
+        },
+        fadeInUp: {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(20px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
       },
     },
   },

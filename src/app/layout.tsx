@@ -1,38 +1,44 @@
-import './globals.css'
-import { ThemeProvider } from '../components/ThemeProvider'
-import { Nunito } from 'next/font/google'
-import Providers from '../components/Providers'
+"use client";
+import "./globals.css";
+import { Nunito, Fredoka } from "next/font/google";
+import { metadata } from "./metadata";
+import Providers from "../components/Providers";
+import { Analytics } from "@vercel/analytics/react";
 
 const nunito = Nunito({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-nunito',
-})
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-nunito",
+});
 
-export const metadata = {
-  title: 'MUCalSync',
-  description: 'Sync your MUERP timetable with Google Calendar',
-  icons: {
-    icon: '/logo.png',
-    apple: '/logo.png',
-  },
-}
+const fredoka = Fredoka({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-fredoka",
+});
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${nunito.variable} antialiased transition-colors duration-300 dark:bg-[#0a0a0a] bg-[#f0f9ff] dark:text-white text-gray-900`}>
+      <head>
+        <title>{metadata.title}</title>
+        <meta name="description" content={metadata.description} />
+        <link rel="icon" href={metadata.icons.icon} />
+        <link rel="apple-touch-icon" href={metadata.icons.apple} />
+      </head>
+      <body
+        className={`${fredoka.variable} ${nunito.variable} antialiased transition-colors duration-300`}
+      >
         <Providers>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="gradient-circles" />
           {children}
-          </ThemeProvider>
+          <Analytics />
         </Providers>
       </body>
     </html>
-  )
+  );
 }
