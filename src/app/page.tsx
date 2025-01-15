@@ -355,6 +355,16 @@ export default function Home() {
             </div>
           </div>
         </div>
+        {/*Privacy Policy*/}
+        <div className="bg-white/10 dark:bg-black/10 backdrop-blur-lg border border-black/10 dark:border-white/10 px-3 py-1.5 rounded-full text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1.5">
+          <a
+            href="https://buildandship.org/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
+            Privacy Policy
+          </a>
+        </div>
       </div>
       <FAQModal isOpen={isFAQOpen} onClose={() => setIsFAQOpen(false)} />
     </div>

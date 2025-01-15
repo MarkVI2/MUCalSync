@@ -42,7 +42,7 @@
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.2"
   },
-  "description": "MU Calendar Sync is a web app to sync your MUERP timetable to your Google Calendar, iCal, or any other calendar format.",
+  "description": "This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).",
   "main": "index.js",
   "author": "Atharv Garg <markvi2>",
   "license": "MIT",
