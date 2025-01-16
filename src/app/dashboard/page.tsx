@@ -18,17 +18,13 @@ const DashboardContent = () => {
 
   const handleEventAdd = async (event: EventInput) => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/events`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-API-Key": process.env.API_KEY || "",
-          },
-          body: JSON.stringify(event),
-        }
-      );
+      const response = await fetch("/api/events", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(event),
+      });
       if (response.ok) {
         const savedEvent = await response.json();
         setEvents((currentEvents) => [...currentEvents, savedEvent]);
@@ -40,17 +36,13 @@ const DashboardContent = () => {
 
   const handleEventUpdate = async (event: EventInput) => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/events/${event.id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "X-API-Key": process.env.API_KEY || "",
-          },
-          body: JSON.stringify(event),
-        }
-      );
+      const response = await fetch(`/api/events/${event.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(event),
+      });
       if (response.ok) {
         setEvents(events.map((e) => (e.id === event.id ? event : e)));
       }
@@ -61,15 +53,9 @@ const DashboardContent = () => {
 
   const handleEventDelete = async (eventId: string) => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/events/${eventId}`,
-        {
-          method: "DELETE",
-          headers: {
-            "X-API-Key": process.env.API_KEY || "",
-          },
-        }
-      );
+      const response = await fetch(`/api/events/${eventId}`, {
+        method: "DELETE",
+      });
       if (response.ok) {
         setEvents(events.filter((e) => e.id !== eventId));
       }
@@ -106,14 +92,7 @@ const DashboardContent = () => {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/events`,
-        {
-          headers: {
-            "X-API-Key": process.env.API_KEY || "",
-          },
-        }
-      );
+      const response = await fetch("/api/events");
       const data = await response.json();
       setEvents(data);
     } catch (error) {
