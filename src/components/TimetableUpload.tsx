@@ -22,16 +22,10 @@ export default function TimetableUpload() {
     formData.append("file", file);
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload-timetable`,
-        {
-          method: "POST",
-          headers: {
-            "X-API-Key": process.env.API_KEY || "",
-          },
-          body: formData,
-        }
-      );
+      const response = await fetch("/api/timetable", {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) {
         throw new Error("Failed to upload timetable");
@@ -57,15 +51,9 @@ export default function TimetableUpload() {
     setSuccess(null);
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/timetable`,
-        {
-          method: "DELETE",
-          headers: {
-            "X-API-Key": process.env.API_KEY || "",
-          },
-        }
-      );
+      const response = await fetch("/api/timetable", {
+        method: "DELETE",
+      });
 
       if (!response.ok) {
         throw new Error("Failed to delete timetables");

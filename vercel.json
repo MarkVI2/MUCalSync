@@ -5,6 +5,10 @@
       "destination": "/api/auth/:path*"
     },
     {
+      "source": "/api/proxy/:path*",
+      "destination": "/api/proxy/:path*"
+    },
+    {
       "source": "/api/:path*",
       "destination": "https://calendar-backend.buildandship.org/api/:path*"
     }
